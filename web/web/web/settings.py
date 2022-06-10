@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^ne#gs=cjv-ku+%2-%-1vvon)u4zx)zio#4s6o78@2se6i=-vy
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['c761-94-25-229-230.eu.ngrok.io', '127.0.0.1']
 
 
 # Application definition
@@ -107,9 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -127,3 +127,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
+
+TELEGRAM_BOT_NAME = 'Login_Site_Bot'
+
+TELEGRAM_BOT_TOKEN = '5484809390:AAF8P5xNB8YuD6VGXBSmrZObMfinYb9qJRs'
+
+TELEGRAM_LOGIN_REDIRECT_URL = 'https://c761-94-25-229-230.eu.ngrok.io/login'

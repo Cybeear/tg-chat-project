@@ -8,13 +8,37 @@ class FaqSerializer(serializers.ModelSerializer):
         fields = ('title', 'description')
 
 
-class BlockSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Block
-        fields = ('user', 'warn', 'permanent')
+class BlockWrite(serializers.Serializer):
+    user = serializers.CharField(max_length=128)
+    permanent = serializers.BooleanField(default=False)
+    warn = serializers.IntegerField(default=1, allow_null=True)
+
+    def create(self, validated_data):
+        return Block.objects.create(**validated_data)
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'user_id_tg', 'warn')
+class UserWrite(serializers.Serializer):
+    username = serializers.CharField(max_length=255)
+    first_name = serializers.CharField(max_length=255, allow_null=True, allow_blank=True)
+    last_name = serializers.CharField(max_length=255, allow_null=True, allow_blank=True)
+    user_id_tg = serializers.IntegerField()
+    warn = serializers.IntegerField(default=0, allow_null=True)
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+    def update(self, instace, validated_data):
+        instace.username = validated_data.get('username', instace.username)
+        instace.first_name = validated_data.get('first_name', instace.first_name)
+        instace.last_name = validated_data.get('last_name', instace.last_name)
+        instace.user_id_tg = validated_data.get('user_id_tg', instace.user_id_tg)
+        instace.save()
+        return instace
+
+
+class UserWriteDetail(serializers.Serializer):
+    username = serializers.CharField(max_length=255)
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    user_id_tg = serializers.IntegerField()
+    warn = serializers.IntegerField()
