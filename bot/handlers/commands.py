@@ -15,12 +15,17 @@ async def start_command(message: types.Message):
 
 @dispatcher.message_handler(commands= ["mute"], commands_prefix="/")
 async def mute_handler(message: types.Message):
-    if message.chat.type != 'group' or message.chat.type != 'supergroup':
+    if message.chat.type != "supergroup" or message.chat.type != "group":
         return
-    if message.reply_to_message is not None:
-        await message.reply_to_message.reply(text=f"Выдать мут пользователю id: {message.reply_to_message.from_user.id}?", reply_markup=keyboards.mute_keyboard())
     else:
-        await message.reply("Нужен реплай на сообщение!")
+        if message.reply_to_message is not None:
+            user = await message.bot.get_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id)
+            if user.status == "creator" or user.status == "administrator":
+                await message.reply(text="Этот пользователь создатель группы или администратор, я не могу его замутить!!!")
+            else:
+                await message.reply_to_message.reply(text=f"Выдать мут пользователю id: {message.reply_to_message.from_user.id}?", reply_markup=keyboards.mute_keyboard())
+        else:
+            await message.reply("Нужен реплай на сообщение!")
 
 
 @dispatcher.message_handler(commands= ["unmute"], commands_prefix="/")
@@ -28,11 +33,12 @@ async def unmute_handler(message: types.Message):
     if message.reply_to_message is not None:
         user = await message.bot.get_chat_member(chat_id=message.chat.id, user_id=message.from_user.id)
         if user.status == "administrator" or user.status == "creator":
-            await message.bot.restrict_chat_member(chat_id = message.chat.id, user_id=message.reply_to_message.from_user.id, 
-            permissions=types.ChatPermissions( can_send_messages = True, can_send_games = True, 
-            can_send_polls = True, can_use_inline_bots = True, can_send_media_messages = True, 
-            can_invite_users = True, can_add_web_page_previews = True, can_send_stickers = True, 
-            can_send_animations = True) )
+            await message.bot.restrict_chat_member(
+                chat_id = message.chat.id, user_id=message.reply_to_message.from_user.id, 
+                permissions=types.ChatPermissions( can_send_messages = True, can_send_games = True, 
+                can_send_polls = True, can_use_inline_bots = True, can_send_media_messages = True, 
+                can_invite_users = True, can_add_web_page_previews = True, can_send_stickers = True, 
+                can_send_animations = True) )
         await message.reply(f"С пользователя {message.reply_to_message.from_user.id} сняты ограничения!")    
     else:
         await message.reply("Нужен реплай на сообщение!")
