@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Faq, User, Block
+from core.models import Faq, User, Block, Poll
 
 
 class FaqSerializer(serializers.ModelSerializer):
@@ -42,3 +42,12 @@ class UserWriteDetail(serializers.Serializer):
     last_name = serializers.CharField(max_length=255)
     user_id_tg = serializers.IntegerField()
     warn = serializers.IntegerField()
+
+
+class PollWrite(serializers.Serializer):
+    keyboard_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
+    total_voted = serializers.IntegerField(default=1, allow_null=True)
+
+    def create(self, validated_data):
+        return Poll.objects.create(**validated_data)
