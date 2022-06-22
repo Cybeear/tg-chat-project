@@ -31,3 +31,8 @@ class BlockAdmin(admin.ModelAdmin):
     fields = ('user', 'start_time', 'permanent')
     #form = BlockForm
 
+
+@admin.register(Poll)
+class PollAdmin(admin.ModelAdmin):
+    list_display = ('keyboard_id', 'user_id')
+    list_filter = ('user_id', 'keyboard_id')
