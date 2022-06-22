@@ -1,5 +1,4 @@
-from cgitb import text
-from aiogram import types
+from aiogram import types, exceptions
 
 from dispatcher import dispatcher, bot
 from handlers import keyboards, functions, voice
@@ -7,10 +6,41 @@ from handlers import keyboards, functions, voice
 
 @dispatcher.message_handler(commands=["start"], commands_prefix="/")
 async def start_command(message: types.Message):
-    if message.chat.type =="private":
-        await message.bot.send_message(chat_id=message.chat.id,
-        text = "start text", parse_mode="HTML")
-    else: return
+    if message.chat.type !="private":
+        return
+    await message.bot.send_message(chat_id=message.chat.id,
+    text = "start text", parse_mode="HTML")
+    
+#Проверить работоспособность
+@dispatcher.message_handler(commands=["role"], commands_prefix="/")
+async def role_command(message: types.Message):
+    if message.chat.type == "private":
+        return
+    try:
+        args = message.get_args()
+        if args == 'clear':
+            await message.bot.promote_chat_member(chat_id=message.chat.id, user_id=message.from_user.id, can_pin_messages = False)
+            mes = await message.reply("Успешно, роль снята!")
+        elif len(args) <= 16 and args != 'clear':
+            await message.bot.promote_chat_member(chat_id=message.chat.id, user_id=message.from_user.id,
+            can_pin_messages=True)
+            await message.bot.set_chat_administrator_custom_title(chat_id=message.chat.id,
+            user_id=message.from_user.id,
+            custom_title = args)
+            mes = await message.reply("Успешно!\nРоль появится в течение минуты.")
+        elif len(args) > 16:
+            await message.reply("Не могу поставить роль. Роль должна быть длинной 16 символов и менее.")
+    except exceptions.CantRestrictChatOwner:
+        message.reply("Ты здесь главный, тебе роль поставить не могу")
+
+
+#Проверить работоспособность
+@dispatcher.message_handler(commands= ["pet"], commands_prefix="/")
+async def pet_command(message: types.Message):
+    if message.chat.type == "private" or message.reply_to_message is None:
+        return 
+    await message.reply_to_message.reply(f"Пользователь {message.from_user.first_name} поблагодарил пользователя {message.reply_to_message.from_user.first_name}")
+    functions.send_pet(message.reply_to_message.from_user.id)
 
 
 @dispatcher.message_handler(commands= ["mute"], commands_prefix="/")
