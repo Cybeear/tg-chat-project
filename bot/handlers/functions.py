@@ -40,9 +40,11 @@ def push_user(user) -> bool:
     """
     Функция добавляет в web нового telegram-пользователя
     TODO проверять, что пользователь уже есть (отдельной функцией?)
-    TODO проверять, что добавляется именно пользователь, а не бот
+    TODO протестировать функцию (нельзя без удаления созданных пользователей)
     TODO возвращается bool, который нигде не проверяется
     """
+    if user.is_bot:
+        return False
     url = f'{config.WEB_URL}api/user'
     headers = {"Authorization": f"Bearer {get_token()}"}
     data = {
