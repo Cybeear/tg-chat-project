@@ -37,10 +37,22 @@ def get_faq() -> list:
 
 
 def push_user(user) -> bool:
-    url = config.WEB_URL + "api/user"
-    params = {"user_id":f"{user.id}", "first_name":f"{user.first_name}", "full_name":f"{user.full_name}", "username":f"{user.mention}",}
-    response = requests.post(url=url, params=params)
-    return True if response.code == 200 else False
+    """
+    Функция добавляет в web нового telegram-пользователя
+    TODO проверять, что пользователь уже есть (отдельной функцией?)
+    TODO проверять, что добавляется именно пользователь, а не бот
+    TODO возвращается bool, который нигде не проверяется
+    """
+    url = f'{config.WEB_URL}api/user'
+    headers = {"Authorization": f"Bearer {get_token()}"}
+    data = {
+            "user_id_tg": f"{user.id}",
+            "first_name": f"{user.first_name}",
+            "last_name": f"{user.full_name}",
+            "username": f"{user.mention}"
+           }
+    response = requests.post(url=url, data=data, headers=headers)
+    return True if 'warn' in response.json() else False
 
 
 #Функция отправки благодарности на сервер django для записи в БД
