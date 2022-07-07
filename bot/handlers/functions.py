@@ -30,8 +30,13 @@ def mute_time(user_id):
 
 
 def get_faq() -> list:
-    url = config.WEB_URL + "api/faq?format=json"
-    response = requests.get(url=url)
+    """
+    Функция возвращает faq из web'a.
+    TODO в ответе может не быть нужной структуры, если предварительно не вызван post-метод api/faq
+    """
+    url = f'{config.WEB_URL}api/faq?format=json'
+    headers = {"Authorization": f"Bearer {get_token()}"}
+    response = requests.get(url=url, headers=headers)
     content = response.json()
     return content
 
