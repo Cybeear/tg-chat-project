@@ -1,5 +1,7 @@
+from typing import Union
 from time import time
 import requests
+
 from config import config
 
 
@@ -17,14 +19,23 @@ def get_token() -> str:
     return response.json()["token"]
 
 
-def get_warn(user_id) -> dict:
-    url = config.WEB_URL + f"api/block/{user_id}?format=json"
-    warn = requests.get(url=url)
-    return warn.json()
+def get_warn(user_id: Union[str, int]) -> int:
+    """
+    Функция возвращает кол-во предупреждений по id пользователя в телеграм,
+    если такой пользователь есть в БД (иначе будет error)!
+    """
+    url = f"{config.WEB_URL}api/block"
+    data = {'user': user_id, 'permanent': False}
+    headers = {"Authorization": f"Bearer {get_token()}"}
+    response = requests.post(url=url, data=data, headers=headers)
+    return response.json()["warn"]
 
 
-def mute_time(user_id):
-    warn = get_warn(user_id=user_id)["warn"]
+def mute_time(user_id: Union[str, int]) -> float:
+    """
+    Функция вычисляет время блокировки пользователя на основе кол-ва предупреждений
+    """
+    warn = get_warn(user_id=user_id)
     _time = time() + warn * 600 + (warn - 1) * 600
     return abs(_time)
 
