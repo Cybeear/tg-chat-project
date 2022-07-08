@@ -1,3 +1,4 @@
+from __future__ import annotations
 from aiogram.types.user import User
 from typing import Union
 from time import time
