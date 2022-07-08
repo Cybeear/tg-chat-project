@@ -86,6 +86,17 @@ def add_vote(user: User, keyboard_id: Union[str, int]) -> dict:
     return response.json()
 
 
+def get_all_polls() -> list[dict]:
+    """
+    Запрос для получения всех голосований.
+    В ответ придет id голосования, кто проголосовал и общее количество голосовавших.
+    """
+    url = f'{config.WEB_URL}api/poll'
+    headers = {"Authorization": f"Bearer {get_token()}"}
+    response = requests.get(url=url, headers=headers)
+    return response.json()
+
+
 #Функция отправки благодарности на сервер django для записи в БД
 def send_pet(user_id):
     pass
