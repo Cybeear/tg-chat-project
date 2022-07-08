@@ -1,3 +1,4 @@
+from aiogram.types.user import User
 from typing import Union
 from time import time
 import requests
@@ -52,7 +53,7 @@ def get_faq() -> list:
     return content
 
 
-def push_user(user) -> bool:
+def push_user(user: User) -> bool:
     """
     Функция добавляет в web нового telegram-пользователя
     TODO проверять, что пользователь уже есть (отдельной функцией?)
@@ -71,6 +72,18 @@ def push_user(user) -> bool:
            }
     response = requests.post(url=url, data=data, headers=headers)
     return True if 'warn' in response.json() else False
+
+
+def add_vote(user: User, keyboard_id: Union[str, int]) -> dict:
+    """
+    Запрос POST на добавление голосования. Отправляем id клавиатуры и id кто проголосовал.
+    В ответ придет id голосования, кто проголосовал и общее количество голосовавших. Повторы не будут учитываться
+    """
+    url = f'{config.WEB_URL}/api/poll'
+    headers = {"Authorization": f"Bearer {get_token()}"}
+    data = {'keyboard_id': '123', 'user_id': '112233'}
+    response = requests.post(url=url, data=data, headers=headers)
+    return response.json()
 
 
 #Функция отправки благодарности на сервер django для записи в БД
