@@ -1,4 +1,3 @@
-import re
 from aiogram import types
 
 from dispatcher import dispatcher, bot
@@ -15,7 +14,7 @@ async def callback_fao(callback_query: types.CallbackQuery):
         text = fao[int(code)]["description"]
     else:
         text = "Error, i dont find this article!"
-    await callback_query.message.reply(text = text)
+    await callback_query.message.reply(text=text)
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('mute'))
@@ -26,17 +25,21 @@ async def mute_callback_button(callback_query: types.CallbackQuery):
     else:
         user_id = callback_query.message.reply_to_message["from"].id
         await callback_query.message.edit_text(text=f"Выдан мут пользователю id: {user_id}", reply_markup="")
-        await bot.restrict_chat_member(chat_id=callback_query.message.chat.id, user_id=user_id, until_date=time()+600)
+        await bot.restrict_chat_member(chat_id=callback_query.message.chat.id, user_id=user_id, until_date=time() + 600)
 
 
 @dispatcher.callback_query_handler(lambda c: c.data and c.data.startswith('welcome'))
 async def mute_callback_button(callback_query: types.CallbackQuery):
     if callback_query.message.reply_to_message["from"].id != callback_query.from_user.id:
         return
-    await bot.restrict_chat_member(chat_id = callback_query.message.chat.id, user_id=callback_query.message.reply_to_message["from"].id, 
-            permissions=types.ChatPermissions( can_send_messages = True, can_send_games = True, 
-            can_send_polls = True, can_use_inline_bots = True, can_send_media_messages = True, 
-            can_invite_users = True, can_add_web_page_previews = True, can_send_stickers = True, 
-            can_send_animations = True))
-    await callback_query.answer(text="Ты прошел проверку",show_alert=True)
+    await bot.restrict_chat_member(chat_id=callback_query.message.chat.id,
+                                   user_id=callback_query.message.reply_to_message["from"].id,
+                                   permissions=types.ChatPermissions(can_send_messages=True, can_send_games=True,
+                                                                     can_send_polls=True, can_use_inline_bots=True,
+                                                                     can_send_media_messages=True,
+                                                                     can_invite_users=True,
+                                                                     can_add_web_page_previews=True,
+                                                                     can_send_stickers=True,
+                                                                     can_send_animations=True))
+    await callback_query.answer(text="Ты прошел проверку", show_alert=True)
     await callback_query.message.delete()
